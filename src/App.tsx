@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryProvider } from '@/providers/QueryProvider';
 import { useAuth } from '@/hooks/useAuth';
+import { LandingPage } from '@/pages/LandingPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { CallbackPage } from '@/pages/CallbackPage';
@@ -32,8 +33,12 @@ function AppRoutes() {
   return (
     <Routes>
       <Route 
+        path="/" 
+        element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />} 
+      />
+      <Route 
         path="/login" 
-        element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} 
+        element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />} 
       />
       <Route 
         path="/api/me" 
@@ -48,7 +53,7 @@ function AppRoutes() {
         element={<DebugPage />} 
       />
       <Route
-        path="/"
+        path="/dashboard"
         element={
           <ProtectedRoute>
             <DashboardPage />
