@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+import { config } from './config';
+
+const API_BASE_URL = config.API_BASE_URL;
 
 export interface UserDto {
   id: string;
@@ -52,6 +54,15 @@ export class ApiClient {
       const response = await fetch(url, config);
 
       if (!response.ok) {
+        // Log CORS/403 errors for debugging
+        if (response.status === 403) {
+          console.error('CORS/403 Error - Check CORS_ALLOWED_ORIGINS on Railway:', {
+            url,
+            status: response.status,
+            statusText: response.statusText,
+          });
+        }
+
         if (response.headers.get('content-type')?.includes('application/problem+json')) {
           const problemDetail: ProblemDetail = await response.json();
           throw new ApiError(problemDetail);
@@ -69,7 +80,16 @@ export class ApiClient {
       if (error instanceof ApiError) {
         throw error;
       }
-      throw new Error(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      
+      // Specific error handling for network issues
+      if (error instanceof Error) {
+        if (error.message.includes('Failed to fetch')) {
+          throw new Error('Network error: Unable to connect to server. Check CORS configuration.');
+        }
+        throw new Error(`Network error: ${error.message}`);
+      }
+      
+      throw new Error('Unknown network error');
     }
   }
 

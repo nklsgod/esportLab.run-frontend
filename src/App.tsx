@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { LoginPage } from '@/pages/LoginPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { CallbackPage } from '@/pages/CallbackPage';
+import { DebugPage } from '@/pages/DebugPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isLoading, isUnauthenticated } = useAuth();
@@ -39,6 +40,10 @@ function AppRoutes() {
       <Route 
         path="/auth/callback" 
         element={<CallbackPage />} 
+      />
+      <Route 
+        path="/debug" 
+        element={<DebugPage />} 
       />
       <Route
         path="/"

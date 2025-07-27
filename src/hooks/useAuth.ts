@@ -1,12 +1,17 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
+import { config } from '@/lib/config';
 
 export function useAuthStatus() {
   return useQuery({
     queryKey: ['auth-status'],
     queryFn: () => apiClient.checkAuthStatus(),
     retry: false,
-    staleTime: 30000, // 30 seconds
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
   });
 }
 
@@ -23,16 +28,16 @@ export function useMe() {
 
 export function useAuth() {
   const queryClient = useQueryClient();
-  const { data: authStatus, isLoading: authLoading } = useAuthStatus();
+  const { data: authStatus, isLoading: authLoading, error: authError } = useAuthStatus();
   const { data: user, isLoading: userLoading, error } = useMe();
 
-  const isAuthenticated = authStatus?.authenticated === true && !!user;
+  // If auth status request fails (CORS/403), don't consider user authenticated
+  const isAuthenticated = !authError && authStatus?.authenticated === true && !!user;
   const isLoading = authLoading || (authStatus?.authenticated === true && userLoading);
-  const isUnauthenticated = !authLoading && authStatus?.authenticated === false;
+  const isUnauthenticated = !authLoading && (authError || authStatus?.authenticated === false);
 
   const login = () => {
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-    window.location.href = `${API_BASE_URL}/oauth2/authorization/discord`;
+    window.location.href = `${config.API_BASE_URL}/oauth2/authorization/discord`;
   };
 
   const logout = async () => {

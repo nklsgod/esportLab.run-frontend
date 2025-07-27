@@ -1,8 +1,8 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+import { config } from '@/lib/config';
 
 export function LoginPage() {
   const handleDiscordLogin = () => {
-    window.location.href = `${API_BASE_URL}/oauth2/authorization/discord`;
+    window.location.href = `${config.API_BASE_URL}/oauth2/authorization/discord`;
   };
 
   return (
