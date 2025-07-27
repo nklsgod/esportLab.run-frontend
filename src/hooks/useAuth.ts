@@ -1,8 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import { config } from '@/lib/config';
-import { extractTokenFromURL, getAuthToken, removeAuthToken } from '@/lib/auth';
-import { useEffect } from 'react';
+import { removeAuthToken } from '@/lib/auth';
 
 export function useAuthStatus() {
   return useQuery({
@@ -32,11 +31,6 @@ export function useAuth() {
   const queryClient = useQueryClient();
   const { data: authStatus, isLoading: authLoading, error: authError } = useAuthStatus();
   const { data: user, isLoading: userLoading, error } = useMe();
-
-  // Initialize auth on mount by extracting token from URL if present
-  useEffect(() => {
-    extractTokenFromURL();
-  }, []);
 
   // If auth status request fails (CORS/403), don't consider user authenticated
   const isAuthenticated = !authError && authStatus?.authenticated === true && !!user;

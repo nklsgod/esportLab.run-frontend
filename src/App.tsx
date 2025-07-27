@@ -5,6 +5,8 @@ import { LoginPage } from '@/pages/LoginPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { CallbackPage } from '@/pages/CallbackPage';
 import { DebugPage } from '@/pages/DebugPage';
+import { extractTokenFromURL } from '@/lib/auth';
+import { useEffect } from 'react';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isLoading, isUnauthenticated } = useAuth();
@@ -59,6 +61,11 @@ function AppRoutes() {
 }
 
 function App() {
+  // Extract token from URL immediately when app loads
+  useEffect(() => {
+    extractTokenFromURL();
+  }, []);
+
   return (
     <QueryProvider>
       <BrowserRouter>
