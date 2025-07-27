@@ -6,6 +6,7 @@ import { LoginPage } from '@/pages/LoginPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { CallbackPage } from '@/pages/CallbackPage';
 import { DebugPage } from '@/pages/DebugPage';
+import { AvailabilityPage } from '@/pages/AvailabilityPage';
 import { extractTokenFromURL } from '@/lib/auth';
 import { useEffect } from 'react';
 
@@ -57,6 +58,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/availability"
+        element={
+          <ProtectedRoute>
+            <AvailabilityPage />
           </ProtectedRoute>
         }
       />
