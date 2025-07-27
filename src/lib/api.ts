@@ -61,7 +61,7 @@ export class ApiClient {
         if (response.status === 401) {
           removeAuthToken();
           window.location.href = '/login';
-          return;
+          throw new Error('Unauthorized - redirecting to login');
         }
 
         // Log CORS/403 errors for debugging
