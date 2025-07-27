@@ -9,30 +9,9 @@ export function LoginPage() {
     window.location.href = loginUrl;
   };
 
-  const handleAlternativeLogin = async () => {
-    try {
-      // Try the /auth/discord/login endpoint first to get the redirect URL
-      const response = await fetch(`${config.API_BASE_URL}/auth/discord/login`, {
-        credentials: 'include',
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Backend response:', data);
-        
-        if (data.redirectUrl) {
-          window.location.href = `${config.API_BASE_URL}${data.redirectUrl}`;
-        }
-      } else {
-        console.error('Auth endpoint failed:', response.status, response.statusText);
-        // Fallback to direct OAuth2 URL
-        window.location.href = `${config.API_BASE_URL}/oauth2/authorization/discord`;
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      // Fallback to direct OAuth2 URL
-      window.location.href = `${config.API_BASE_URL}/oauth2/authorization/discord`;
-    }
+  const handleAlternativeLogin = () => {
+    // Direct navigation to Discord OAuth login endpoint
+    window.location.href = `${config.API_BASE_URL}/auth/discord/login`;
   };
 
   return (
