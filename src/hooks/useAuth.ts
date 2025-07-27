@@ -1,6 +1,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import { config } from '@/lib/config';
+import { extractTokenFromURL, getAuthToken, removeAuthToken } from '@/lib/auth';
+import { useEffect } from 'react';
 
 export function useAuthStatus() {
   return useQuery({
@@ -31,24 +33,31 @@ export function useAuth() {
   const { data: authStatus, isLoading: authLoading, error: authError } = useAuthStatus();
   const { data: user, isLoading: userLoading, error } = useMe();
 
+  // Initialize auth on mount by extracting token from URL if present
+  useEffect(() => {
+    extractTokenFromURL();
+  }, []);
+
   // If auth status request fails (CORS/403), don't consider user authenticated
   const isAuthenticated = !authError && authStatus?.authenticated === true && !!user;
   const isLoading = authLoading || (authStatus?.authenticated === true && userLoading);
   const isUnauthenticated = !authLoading && (authError || authStatus?.authenticated === false);
 
   const login = () => {
-    window.location.href = `${config.API_BASE_URL}/oauth2/authorization/discord`;
+    window.location.href = `${config.API_BASE_URL}/auth/discord/login`;
   };
 
   const logout = async () => {
     try {
       await apiClient.logout();
+    } catch (error) {
+      console.error('Logout request failed:', error);
+    } finally {
+      removeAuthToken();
       queryClient.setQueryData(['auth-status'], { authenticated: false });
       queryClient.setQueryData(['me'], null);
       queryClient.clear();
-      window.location.href = '/';
-    } catch (error) {
-      console.error('Logout failed:', error);
+      window.location.href = '/login';
     }
   };
 

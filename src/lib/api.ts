@@ -1,4 +1,5 @@
 import { config } from './config';
+import { getAuthToken, removeAuthToken } from './auth';
 
 const API_BASE_URL = config.API_BASE_URL;
 
@@ -40,11 +41,13 @@ export class ApiClient {
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
+    const token = getAuthToken();
     
     const config: RequestInit = {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
         ...options.headers,
       },
       ...options,
@@ -54,6 +57,13 @@ export class ApiClient {
       const response = await fetch(url, config);
 
       if (!response.ok) {
+        // Handle token expiration
+        if (response.status === 401) {
+          removeAuthToken();
+          window.location.href = '/login';
+          return;
+        }
+
         // Log CORS/403 errors for debugging
         if (response.status === 403) {
           console.error('CORS/403 Error - Check CORS_ALLOWED_ORIGINS on Railway:', {

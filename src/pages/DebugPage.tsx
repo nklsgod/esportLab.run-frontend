@@ -7,6 +7,7 @@ interface TestResults {
   authStatus?: any;
   directFetch?: any;
   me?: any;
+  crossDomain?: any;
 }
 
 export function DebugPage() {
@@ -64,6 +65,35 @@ export function DebugPage() {
     }
   };
 
+  const testCrossDomain = async () => {
+    try {
+      console.log('Testing cross-domain cookie access...');
+      // Try to access the backend directly to see if cookies exist there
+      const response = await fetch('https://esportlab-backend-production.up.railway.app/api/me', {
+        method: 'GET',
+        credentials: 'include',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const data = await response.json();
+      setTestResults((prev: TestResults) => ({ 
+        ...prev, 
+        crossDomain: { 
+          status: response.status, 
+          data,
+          headers: Object.fromEntries(response.headers.entries())
+        } 
+      }));
+    } catch (error) {
+      console.error('Cross-domain test error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setTestResults((prev: TestResults) => ({ ...prev, crossDomain: { error: errorMessage } }));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-4xl mx-auto">
@@ -104,6 +134,12 @@ export function DebugPage() {
                 className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded mr-2"
               >
                 Test /api/me
+              </button>
+              <button 
+                onClick={testCrossDomain}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded mr-2"
+              >
+                Test Cross-Domain /api/me
               </button>
             </div>
             {Object.keys(testResults).length > 0 && (
