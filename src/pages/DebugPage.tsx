@@ -52,7 +52,30 @@ export function DebugPage() {
               >
                 {config.API_BASE_URL}/api/me
               </a>
+              <a 
+                href={`${config.API_BASE_URL}/oauth2/authorization/discord`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-blue-600 hover:text-blue-800 underline"
+              >
+                {config.API_BASE_URL}/oauth2/authorization/discord (OAuth2)
+              </a>
+              <a 
+                href={`${config.API_BASE_URL}/auth/discord/login`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-blue-600 hover:text-blue-800 underline"
+              >
+                {config.API_BASE_URL}/auth/discord/login (Alternative)
+              </a>
             </div>
+          </div>
+          
+          <div>
+            <h2 className="text-lg font-semibold mb-2">Current URL</h2>
+            <p className="text-sm text-muted-foreground break-all">
+              {window.location.href}
+            </p>
           </div>
         </div>
       </div>
