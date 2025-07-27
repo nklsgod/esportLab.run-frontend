@@ -3,6 +3,7 @@ import { QueryProvider } from '@/providers/QueryProvider';
 import { useAuth } from '@/hooks/useAuth';
 import { LoginPage } from '@/pages/LoginPage';
 import { DashboardPage } from '@/pages/DashboardPage';
+import { CallbackPage } from '@/pages/CallbackPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isLoading, isUnauthenticated } = useAuth();
@@ -30,6 +31,14 @@ function AppRoutes() {
       <Route 
         path="/login" 
         element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} 
+      />
+      <Route 
+        path="/api/me" 
+        element={<CallbackPage />} 
+      />
+      <Route 
+        path="/auth/callback" 
+        element={<CallbackPage />} 
       />
       <Route
         path="/"

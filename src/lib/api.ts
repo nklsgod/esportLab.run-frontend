@@ -2,12 +2,12 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080
 
 export interface UserDto {
   id: string;
+  discordUserId: string;
   displayName: string;
-  discordId: string;
   avatarUrl?: string;
   tz: string;
-  role: 'USER' | 'ADMIN';
-  teamId?: string;
+  roles: string[];
+  teamIds: string[];
 }
 
 export interface ProblemDetail {
@@ -75,6 +75,10 @@ export class ApiClient {
 
   async getMe(): Promise<UserDto> {
     return this.request<UserDto>('/api/me');
+  }
+
+  async checkAuthStatus(): Promise<{ authenticated: boolean }> {
+    return this.request<{ authenticated: boolean }>('/auth/status');
   }
 
   async logout(): Promise<void> {
