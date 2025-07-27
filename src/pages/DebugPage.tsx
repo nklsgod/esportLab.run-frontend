@@ -3,18 +3,25 @@ import { apiClient } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import { useState } from 'react';
 
+interface TestResults {
+  authStatus?: any;
+  directFetch?: any;
+  me?: any;
+}
+
 export function DebugPage() {
   const { user, isAuthenticated, isLoading } = useAuth();
-  const [testResults, setTestResults] = useState<any>({});
+  const [testResults, setTestResults] = useState<TestResults>({});
 
   const testAuthStatus = async () => {
     try {
       console.log('Testing auth status...');
       const result = await apiClient.checkAuthStatus();
-      setTestResults(prev => ({ ...prev, authStatus: result }));
+      setTestResults((prev: TestResults) => ({ ...prev, authStatus: result }));
     } catch (error) {
       console.error('Auth status error:', error);
-      setTestResults(prev => ({ ...prev, authStatus: { error: error.message } }));
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setTestResults((prev: TestResults) => ({ ...prev, authStatus: { error: errorMessage } }));
     }
   };
 
@@ -30,7 +37,7 @@ export function DebugPage() {
       });
       
       const data = await response.json();
-      setTestResults(prev => ({ 
+      setTestResults((prev: TestResults) => ({ 
         ...prev, 
         directFetch: { 
           status: response.status, 
@@ -40,7 +47,8 @@ export function DebugPage() {
       }));
     } catch (error) {
       console.error('Direct fetch error:', error);
-      setTestResults(prev => ({ ...prev, directFetch: { error: error.message } }));
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setTestResults((prev: TestResults) => ({ ...prev, directFetch: { error: errorMessage } }));
     }
   };
 
@@ -48,10 +56,11 @@ export function DebugPage() {
     try {
       console.log('Testing /api/me...');
       const result = await apiClient.getMe();
-      setTestResults(prev => ({ ...prev, me: result }));
+      setTestResults((prev: TestResults) => ({ ...prev, me: result }));
     } catch (error) {
       console.error('Me error:', error);
-      setTestResults(prev => ({ ...prev, me: { error: error.message } }));
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setTestResults((prev: TestResults) => ({ ...prev, me: { error: errorMessage } }));
     }
   };
 
