@@ -11,6 +11,9 @@ export interface UserDto {
   tz: string;
   roles: string[];
   teamIds: string[];
+  hasTeam?: boolean;
+  isTeamOwner?: boolean;
+  isTeamAdmin?: boolean;
 }
 
 export interface ProblemDetail {

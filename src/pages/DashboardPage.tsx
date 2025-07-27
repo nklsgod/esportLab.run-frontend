@@ -1,48 +1,13 @@
 import { useAuth } from '@/hooks/useAuth';
-import logo from '@/assets/logo.png';
+import { Navigation } from '@/components/Navigation';
+import { Link } from 'react-router-dom';
 
 export function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <img src={logo} alt="EsportLab" className="w-8 h-8" />
-              <h1 className="text-2xl font-bold text-gray-900">
-                EsportLab
-              </h1>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                {user?.avatarUrl && (
-                  <img
-                    src={user.avatarUrl}
-                    alt={user.displayName}
-                    className="w-8 h-8 rounded-full border-2 border-purple-200"
-                  />
-                )}
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">
-                    {user?.displayName}
-                  </p>
-                  <p className="text-xs text-gray-500">Dashboard</p>
-                </div>
-              </div>
-              <button
-                onClick={logout}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-              >
-                Abmelden
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navigation />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -205,19 +170,30 @@ export function DashboardPage() {
                   <span className="text-sm font-medium text-gray-900">Training erstellen</span>
                 </button>
                 
-                <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-3 border border-gray-200">
+                <Link to="/team" className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-3 border border-gray-200">
                   <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
                     <span className="text-green-600 text-lg">👥</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900">Team verwalten</span>
-                </button>
+                  <span className="text-sm font-medium text-gray-900">
+                    {user?.hasTeam ? 'Team verwalten' : 'Team beitreten'}
+                  </span>
+                </Link>
                 
-                <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-3 border border-gray-200">
-                  <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <span className="text-purple-600 text-lg">📊</span>
-                  </div>
-                  <span className="text-sm font-medium text-gray-900">Statistiken</span>
-                </button>
+                {user?.hasTeam ? (
+                  <Link to="/availability" className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-3 border border-gray-200">
+                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <span className="text-purple-600 text-lg">📅</span>
+                    </div>
+                    <span className="text-sm font-medium text-gray-900">Verfügbarkeit</span>
+                  </Link>
+                ) : (
+                  <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-3 border border-gray-200">
+                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <span className="text-purple-600 text-lg">📊</span>
+                    </div>
+                    <span className="text-sm font-medium text-gray-900">Statistiken</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
